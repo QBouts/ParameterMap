@@ -170,13 +170,14 @@ TEST_F(ParameterMapTestSuite, SubmittingParametersToFunctionCallsFunctionWithCor
 	int myInt = 0;
 	bool enabled = false;
 	std::string name;
-	EXPECT_EQ(map.submit([&](int a, bool b, const std::string& c) {
+	auto testfunc = [&](int a, bool b, const std::string& c) {
 		myInt = a;
 		enabled = b;
 		name = c;
 		return 7;
-	}),
-						7);
+	};
+
+	EXPECT_EQ(map.submit(testfunc), 7);
 	EXPECT_EQ(myInt, 6);
 	EXPECT_EQ(enabled, true);
 	EXPECT_EQ(name, "Homer Simpson");
