@@ -148,10 +148,11 @@ called with the stored parameters.
 
 ## Performance
 Care has been taken to avoid making unnecessary copies of parameters or string comparisons.
-When using a ParameterMap of N parameters in a performance sensitive part of your code be aware of the following:
-- Any operations where parameters are identified by their name (set, get, is_set) will perform between 1
-and N string comparisons. Where possible, prefer the use of the index based variants of these functions or
-  build the parameter map outside of the performance critical section of your code.
+When using a ParameterMap in a performance sensitive part of your code be aware of the following:
+- Any operations where parameters are identified by their name (set, get, is_set) will compute an std::hash of the 
+  given name, which takes linear time in the length of the name. Where possible, prefer the use of 
+  the index based variants of these functions or build the parameter map outside of the performance critical section
+  of your code.
 - For most functions the overhead of using submit compared to calling the function directly will be negligible.
   There is however one small exception to be aware of: function calls made using submit do not benefit from move
   semantics. To be specific: For functions that accept parameters by rvalue reference (e.g. int&&), a copy of the

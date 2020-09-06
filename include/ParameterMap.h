@@ -43,10 +43,11 @@ inline void static_for(Lambda const &f);
  *
  *  \par Performance
  *  Care has been taken to avoid making unnecessary copies of parameters or string comparisons.
- *  When using a ParameterMap of \a N parameters in a performance sensitive part of your code be aware of the following:
- *  - Any operations where parameters are identified by their name ( \a set, \a get, \a is_set) will perform between 1
- *		and \a N string comparisons. Where possible, prefer the use of the index based variants of these functions or
- *    build the parameter map outside of the performance critical section of your code.
+ *  When using a ParameterMap of in a performance sensitive part of your code be aware of the following:
+ *  - Any operations where parameters are identified by their name ( \a set, \a get, \a is_set) will compute an
+ *    std::hash of the given \a name, which takes linear time in the length of the name. Where possible,
+ *    prefer the use of the index based variants of these functions or build the parameter map outside of
+ *    the performance critical section of your code.
  *  - For most functions the overhead of using \a submit compared to calling the function directly will be negligible.
  *    There is however one small exception to be aware of: function calls made using \a submit do not benefit from move
  *    semantics. To be specific: For functions that accept parameters by rvalue reference (e.g. int&&), a copy of the
@@ -199,7 +200,7 @@ public:
 
 private:
 	static constexpr size_t n_parameters = sizeof...(PARAMETERS);
-	std::array<std::string, n_parameters> m_parameter_names;
+	std::array<std::size_t, n_parameters> m_parameter_name_hashes;
 	using parameter_tuple_t = std::tuple<std::optional<std::remove_cv_t<std::remove_reference_t<PARAMETERS>>>...>;
 	parameter_tuple_t m_stored_values;
 
@@ -237,7 +238,7 @@ template <typename... PARAMETERS>
 template <typename... PARAM_NAMES>
 ParameterMap<PARAMETERS...>::ParameterMap(PARAM_NAMES &&... names) requires(sizeof...(PARAMETERS) ==
 																																						sizeof...(PARAM_NAMES))
-		: m_parameter_names{std::forward<PARAM_NAMES>(names)...} {}
+		: m_parameter_name_hashes{std::hash<std::string>{}(std::forward<PARAM_NAMES>(names))...} {}
 
 template <typename... PARAMETERS>
 template <typename T>
@@ -326,8 +327,7 @@ auto ParameterMap<PARAMETERS...>::submit(FUNCTION &&function) const
 		requires(std::is_invocable_v<FUNCTION, PARAMETERS...>) {
 	detail::static_for<0, n_parameters>([&](auto i) {
 		if (!is_set<i.value>()) {
-			throw std::runtime_error(std::string{"Unable to call function: No stored value for parameter \""} +
-															 std::get<i.value>(m_parameter_names) + "\"");
+			throw std::runtime_error("Unable to call function: No stored value for parameter");
 		}
 	});
 	return detail::apply_optionals(function, m_stored_values);
@@ -401,7 +401,8 @@ void ParameterMap<PARAMETERS...>::pass_first_index_matching_predicate_to(const R
 
 template <typename... PARAMETERS>
 auto ParameterMap<PARAMETERS...>::ensure_name_matches(const std::string_view &name) const {
-	return [&](auto i) { return m_parameter_names.at(size_t(i)) == name; };
+	auto name_hash = std::hash<std::string_view>{}(name);
+	return [&, name_hash](auto i) { return m_parameter_name_hashes.at(size_t(i)) == name_hash; };
 }
 
 
