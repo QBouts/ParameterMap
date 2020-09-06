@@ -12,4 +12,6 @@ ENDIF()
 include_directories(include)
 
 add_subdirectory(examples)
+
+enable_testing()
 add_subdirectory(tst)
