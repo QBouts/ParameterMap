@@ -79,13 +79,10 @@ Before submitting the parameter to the create_texture function,
 you loop over the map and fill in defaults if no parameters where set. The (non compiled / pseudo) code might look something like this
 
 ```c++
-std::unique_ptr<Texture> create_from_xml(const std::string name){
+auto read_params_from_xml(const XMLNode &node){
   ParameterMap<const std::string&, double, bool> 
     params{"path", "size_percent", "flip"};
-
-  // Read parameters from configuration
-  XMLReader xml("textures.xml");
-  const auto &node = xml.find_node(name);
+  
   for(const auto &property: node){
     if(property.type == "string"){
       params.set(property.get_name(), property.value_as<std::string>());
@@ -97,9 +94,18 @@ std::unique_ptr<Texture> create_from_xml(const std::string name){
       params.set(property.get_name(), property.value_as<bool>());
     }
   }
+  return params;
+}
+
+std::unique_ptr<Texture> create_from_xml(const std::string name){
+  // Read parameters from configuration
+  XMLReader defaults_xml("defaults.xml");
+  auto defaults = read_params_from_xml(defaults_xml.get_root());
+  
+  XMLReader textures_xml("textures.xml");
+  auto params = read_params_from_xml(textures_xml.get(name));
 
   // apply defaults for any missing parameters
-  const auto &defaults = get_texture_default_parameters("defaults.xml");
   for(size_t i=0;i<3;i++){
     if(!params.is_set(i)){
       params.set(i, defaults.get(i));
