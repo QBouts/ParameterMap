@@ -1,3 +1,5 @@
+![Build and Test status](https://github.com/qbouts/ParameterMap/workflows/Build%20and%20Test/badge.svg)
+
 # ParameterMap
 Contains code for working with parameter maps. A parameter map be thought of as a set of {name, value} pairs.
 The ParameterMap class provided by [ParameterMap.h](include/ParameterMap.h) allows users to build up a parameter map
