@@ -17,7 +17,7 @@ jobs:
 
     strategy:
        matrix:
-        compiler: [g++-9, clang]
+        compiler: [g++-9, clang-10]
 
     steps:
     - uses: actions/checkout@v2
