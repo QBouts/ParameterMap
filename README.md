@@ -127,8 +127,8 @@ The code has been verified to compile successfully on Debian Linux using
 To compile the tests both CMake and GoogleTest (gtest) need to be installed.
 From the root directory of the repository you can compile using
 ```
-    $ cmake .
-    $ make
+$ cmake .
+$ make
 ```
 
 # More documentation
