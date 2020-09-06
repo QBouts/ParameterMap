@@ -42,7 +42,10 @@ the requirement that it should be possible to specify default values for paramet
 
 As an example of such a usage, take the fictions factory function below, which creates textures
 ```c++
-  std::unique_ptr<Texture> create_texture(const std::string &path, double size_percent, bool wrapping);
+  std::unique_ptr<Texture> create_texture(
+                             const std::string &path, 
+                             double size_percent, 
+                             bool flip);
 ```
 
 The defaults file for a texture 
