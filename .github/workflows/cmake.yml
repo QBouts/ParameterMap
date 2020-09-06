@@ -6,9 +6,6 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
-strategy:
-  matrix:
-    compiler: [g++-9, clang++10]
 
 jobs:
   build:
@@ -17,6 +14,10 @@ jobs:
     # cross-platform coverage.
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
     runs-on: ubuntu-20.04 
+
+    strategy:
+       matrix:
+        compiler: [g++-9, clang++10]
 
     steps:
     - uses: actions/checkout@v2
