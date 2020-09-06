@@ -41,12 +41,14 @@ For this project I had to call several factory functions with parameters retriev
 the requirement that it should be possible to specify default values for parameters. 
 
 As an example of such a usage, take the fictions factory function below, which creates textures
+```c++
   std::unique_ptr<Texture> create_texture(const std::string &path, double size_percent, bool wrapping);
+```
 
 The defaults file for a texture 
 might look somewhat like this
 ```xml
-<!-- texture_defaults.txt -->
+<!-- defaults.xml -->
 <size_percent type="double">100</size_percent>
 <flip type="bool">false</flip>
 ```
@@ -68,12 +70,15 @@ Different textures could then be specified as follows
 
 Using ParameterMaps it becomes much easier to compose the function calls to create_texture with the correct arguments. 
 You can simply use one ParameterMap to keep track of default values and a second map to gather the parameters of a 
-specific texture as the xml file is being parsed. Before submitting the parameter to the create_texture function, 
+specific texture as the xml file is being parsed. 
+
+Before submitting the parameter to the create_texture function, 
 you loop over the map and fill in defaults if no parameters where set. The (non compiled / pseudo) code might look something like this
 
 ```c++
 std::unique_ptr<Texture> create_from_xml(const std::string name){
-  ParameterMap<const std::string&, double, bool> params{"path", "size_percent", "flip"};
+  ParameterMap<const std::string&, double, bool> 
+    params{"path", "size_percent", "flip"};
 
   // Read parameters from configuration
   XMLReader xml("textures.xml");
@@ -91,7 +96,7 @@ std::unique_ptr<Texture> create_from_xml(const std::string name){
   }
 
   // apply defaults for any missing parameters
-  const auto &defaults = get_texture_default_parameters("texture_defaults.xml");
+  const auto &defaults = get_texture_default_parameters("defaults.xml");
   for(size_t i=0;i<3;i++){
     if(!params.is_set(i)){
       params.set(i, defaults.get(i));
@@ -121,21 +126,21 @@ Documentation is provided in the form of doxygen comments. The text below is a c
 
 ## Creating a ParameterMap
 The ParameterMap is constructed with a set of parameter types supplied as template arguments and names for each parameter.
-Once constructed parameters can be stored as well as retrieved using \a set and \a get functions.
+Once constructed parameters can be stored as well as retrieved using set and get functions.
 Parameters can be identified using the names supplied upon constructing the map as well as using their index.
 
 ## Calling a function with the stored parameters
-Using the \a submit member function the parameters can be 'submitted' to a supplied function: The function will be
+Using the submit member function the parameters can be 'submitted' to a supplied function: The function will be
 called with the stored parameters.
 
 ## Performance
 Care has been taken to avoid making unnecessary copies of parameters or string comparisons.
-When using a ParameterMap of \a N parameters in a performance sensitive part of your code be aware of the following:
-- Any operations where parameters are identified by their name ( \a set, \a get, \a is_set) will perform between 1
-and \a N string comparisons. Where possible, prefer the use of the index based variants of these functions or
+When using a ParameterMap of N parameters in a performance sensitive part of your code be aware of the following:
+- Any operations where parameters are identified by their name (set, get, is_set) will perform between 1
+and N string comparisons. Where possible, prefer the use of the index based variants of these functions or
   build the parameter map outside of the performance critical section of your code.
-- For most functions the overhead of using \a submit compared to calling the function directly will be negligible.
-  There is however one small exception to be aware of: function calls made using \a submit do not benefit from move
+- For most functions the overhead of using submit compared to calling the function directly will be negligible.
+  There is however one small exception to be aware of: function calls made using submit do not benefit from move
   semantics. To be specific: For functions that accept parameters by rvalue reference (e.g. int&&), a copy of the
-  stored parameter will be made. This is required as the parameter map may not be modified by the \a submit call.
+  stored parameter will be made. This is required as the parameter map may not be modified by the submit call.
 
