@@ -126,9 +126,10 @@ The code has been verified to compile successfully on Debian Linux using
 ## Compilation of tests and examples
 To compile the tests both CMake and GoogleTest (gtest) need to be installed.
 From the root directory of the repository you can compile using
-    cmake .
-    make
-
+```
+    $ cmake .
+    $ make
+```
 
 # More documentation
 Documentation is provided in the form of doxygen comments. The text below is a copy comment at the top of the ParameterMap class. Please look at the source code for further documentation on the specific members of the class.
