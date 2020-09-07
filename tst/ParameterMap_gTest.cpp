@@ -159,6 +159,9 @@ TEST_F(ParameterMapTestSuite, SizeReturnsTheCorrectValue) {
 	EXPECT_EQ(map2.size(), 6);
 	ParameterMap<> map3{};
 	EXPECT_EQ(map3.size(), 0);
+
+	auto size = ParameterMap<int, int>::size();
+	EXPECT_EQ(size, 2);
 }
 
 TEST_F(ParameterMapTestSuite, SubmittingParametersToFunctionWhenNotAllHaveBeenSetThrowsRuntimeError) {

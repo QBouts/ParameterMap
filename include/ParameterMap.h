@@ -180,7 +180,7 @@ public:
 	 *  @brief Returns the number of parameters in the ParameterMap.
 	 *  @return The number of parameters in the ParameterMap.
 	 */
-	constexpr size_t size() const noexcept { return n_parameters; }
+	static constexpr size_t size() noexcept { return n_parameters; }
 
 	/****************************************************************************/
 	/********************************* submit ***********************************/
