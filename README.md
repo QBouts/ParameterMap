@@ -108,7 +108,7 @@ std::unique_ptr<Texture> create_from_xml(const std::string name){
   auto params = read_params_from_xml(textures_xml.get(name));
 
   // apply defaults for any missing parameters
-  for(size_t i=0;i<3;i++){
+  for(size_t i=0;i<params.size();i++){
     if(!params.is_set(i)){
       params.set(i, defaults.get(i));
     }
