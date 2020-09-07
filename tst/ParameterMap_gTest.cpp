@@ -152,6 +152,15 @@ TEST_F(ParameterMapTestSuite, SettingParameterWhichWasSetBeforeUpdatesItsValue) 
 	EXPECT_EQ(map.get<std::string>("name"), "Marge Simpson");
 }
 
+TEST_F(ParameterMapTestSuite, SizeReturnsTheCorrectValue) {
+	ParameterMap<int, bool, const std::string&> map{"myInt", "enabled", "name"};
+	EXPECT_EQ(map.size(), 3);
+	ParameterMap<int, int, int, int, int, int> map2{"a", "b", "c", "d", "e", "f"};
+	EXPECT_EQ(map2.size(), 6);
+	ParameterMap<> map3{};
+	EXPECT_EQ(map3.size(), 0);
+}
+
 TEST_F(ParameterMapTestSuite, SubmittingParametersToFunctionWhenNotAllHaveBeenSetThrowsRuntimeError) {
 	ParameterMap<int, bool, const std::string&> map{"myInt", "enabled", "name"};
 	EXPECT_THROW(map.submit([](int, bool, const std::string&) { return 4; }), std::runtime_error);
