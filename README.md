@@ -42,7 +42,7 @@ I initially created the ParameterMap class when I was writing some (de)serializa
 For this project I had to call several factory functions with parameters retrieved from xml files. Furthermore, I had
 the requirement that it should be possible to specify default values for parameters. 
 
-As an example of such a usage, take the fictions factory function below, which creates textures
+As an example of such a usage, take the fictitious factory function below, which creates textures
 ```c++
   std::unique_ptr<Texture> create_texture(
                              const std::string &path, 
